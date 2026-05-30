@@ -1,0 +1,272 @@
+/* ─── Card shell ──────────────────────────────────────────────── */
+.track-card {
+  position: relative;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  aspect-ratio: 2 / 3;
+  cursor: default;
+  user-select: none;
+  transform: rotate(var(--card-tilt, 0deg));
+  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+  isolation: isolate;
+}
+
+.track-card:hover {
+  transform: rotate(0deg) translateY(-10px) scale(1.07);
+  z-index: 20;
+  filter: brightness(1.12);
+}
+
+/* Core — vivid green border */
+.track-card.core {
+  border: 4px solid var(--green-bright);
+  box-shadow:
+    0 6px 24px rgba(0,0,0,0.75),
+    0 0 14px rgba(29,185,84,0.55),
+    0 0 36px rgba(29,185,84,0.22);
+}
+
+.track-card.core:hover {
+  border-color: #4ade80;
+  box-shadow:
+    0 14px 48px rgba(0,0,0,0.9),
+    0 0 28px rgba(29,185,84,0.8),
+    0 0 60px rgba(29,185,84,0.35);
+}
+
+/* Discovery — vivid gold border */
+.track-card.discovery {
+  border: 4px solid var(--gold-bright);
+  box-shadow:
+    0 6px 24px rgba(0,0,0,0.75),
+    0 0 14px rgba(245,197,66,0.55),
+    0 0 36px rgba(245,197,66,0.22);
+}
+
+.track-card.discovery:hover {
+  border-color: #ffe88a;
+  box-shadow:
+    0 14px 48px rgba(0,0,0,0.9),
+    0 0 28px rgba(245,197,66,0.8),
+    0 0 60px rgba(245,197,66,0.35);
+}
+
+/* ─── Full bleed artist background ───────────────────────────── */
+.card-artist-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+  filter: saturate(1.35) brightness(1.08) contrast(1.05);
+}
+
+/* ─── Inner mat ───────────────────────────────────────────────── */
+.card-inner-mat {
+  position: absolute;
+  inset: 5px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.22);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.track-card.core .card-inner-mat      { box-shadow: inset 0 0 10px rgba(29,185,84,0.15); }
+.track-card.discovery .card-inner-mat { box-shadow: inset 0 0 10px rgba(245,197,66,0.15); }
+
+/* ─── Gold foil gleam sweep (idle, loops) ─────────────────────── */
+.track-card::after {
+  content: '';
+  position: absolute;
+  top: -5%;
+  left: 0;
+  width: 50%;
+  height: 110%;
+  background: linear-gradient(
+    105deg,
+    transparent,
+    rgba(255,245,200,0.06) 30%,
+    rgba(255,255,255,0.22) 50%,
+    rgba(255,245,200,0.06) 70%,
+    transparent
+  );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 8;
+  animation: gleamSweep var(--gleam-duration, 4s) var(--gleam-delay, 0s) ease-in-out infinite;
+}
+
+.track-card.discovery::after {
+  background: linear-gradient(
+    105deg,
+    transparent,
+    rgba(255,220,80,0.08) 30%,
+    rgba(255,240,140,0.35) 50%,
+    rgba(255,220,80,0.08) 70%,
+    transparent
+  );
+}
+
+/* ─── Holographic shimmer ─────────────────────────────────────── */
+.track-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  background: conic-gradient(
+    from calc(var(--mouse-x, 0.5) * 360deg) at calc(var(--mouse-x, 0.5) * 100%) calc(var(--mouse-y, 0.5) * 100%),
+    #ff000033, #ff7f0033, #ffff0033, #00ff0033,
+    #0000ff33, #8b00ff33, #ff000033
+  );
+  mix-blend-mode: color-dodge;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.track-card:hover::before { opacity: 0.75; }
+
+.track-card.discovery::before {
+  background: conic-gradient(
+    from calc(var(--mouse-x, 0.5) * 360deg) at calc(var(--mouse-x, 0.5) * 100%) calc(var(--mouse-y, 0.5) * 100%),
+    #f5c54255, #ffe08055, #fff7a055, #f5c54255
+  );
+}
+
+/* ─── TOP: artist header band ─────────────────────────────────── */
+.card-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 8px 8px 10px;
+}
+
+.track-card.core .card-header {
+  background: linear-gradient(180deg, #16a34a 0%, rgba(22,163,74,0.92) 70%, transparent 100%);
+}
+
+.track-card.discovery .card-header {
+  background: linear-gradient(180deg, var(--gold-dim) 0%, rgba(201,160,32,0.92) 70%, transparent 100%);
+}
+
+.card-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+  padding-right: 6px;
+}
+
+.card-discovery-badge {
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  width: fit-content;
+}
+
+.card-artist-name {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #000;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.card-dismiss {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.85);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  backdrop-filter: blur(6px);
+  padding: 0;
+}
+
+.card-dismiss:hover {
+  background: rgba(220,30,30,0.9);
+  color: white;
+  border-color: rgba(255,80,80,0.7);
+}
+
+/* ─── BOTTOM: song + album bands ──────────────────────────────── */
+.card-bands {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 6;
+}
+
+/* Song title band */
+.card-title-band {
+  padding: 8px 10px 6px;
+}
+
+.track-card.core .card-title-band {
+  background: rgba(8, 22, 50, 0.92);
+  border-top: 1px solid rgba(29,185,84,0.35);
+}
+
+.track-card.discovery .card-title-band {
+  background: rgba(28, 18, 6, 0.92);
+  border-top: 1px solid rgba(245,197,66,0.35);
+}
+
+.card-song-name {
+  font-family: var(--font);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+
+/* Album name band */
+.card-album-band {
+  padding: 4px 10px 6px;
+  background: rgba(4, 8, 28, 0.93);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.card-album-name {
+  font-family: var(--font);
+  font-size: 0.6rem;
+  color: rgba(200,210,240,0.75);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}

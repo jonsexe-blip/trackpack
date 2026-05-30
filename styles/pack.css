@@ -1,0 +1,336 @@
+.pack-open-screen {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 40% 60% at 50% -5%, rgba(255,215,80,0.32) 0%, rgba(255,180,40,0.12) 45%, transparent 68%),
+    radial-gradient(ellipse 70% 35% at 50% 45%, rgba(255,200,60,0.07) 0%, transparent 100%),
+    #08080f;
+}
+
+.pack-open-screen h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-align: center;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 50%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+}
+
+.pack-open-screen .pack-hint {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-align: center;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.pack-wrapper {
+  position: relative;
+  cursor: pointer;
+  transform-origin: center center;
+  filter: drop-shadow(0 32px 48px rgba(0,0,0,0.85)) drop-shadow(0 0 24px rgba(245,197,66,0.3));
+  transition: filter var(--transition-med);
+}
+
+.pack-wrapper:hover {
+  filter: drop-shadow(0 32px 48px rgba(0,0,0,0.85)) drop-shadow(0 0 40px rgba(245,197,66,0.55));
+}
+
+.pack-body {
+  width: 280px;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 24px 64px rgba(0,0,0,0.9),
+    0 0 30px rgba(245,197,66,0.35),
+    0 0 60px rgba(245,197,66,0.12);
+  transition: filter var(--transition-fast);
+  transform-origin: center center;
+  border: 2px solid rgba(245,197,66,0.55);
+}
+
+/* ─── Animated gleam sweep on pack body ──────────────────────── */
+.pack-gleam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255,255,255,0.08) 40%,
+    rgba(255,255,255,0.32) 50%,
+    rgba(255,255,255,0.08) 60%,
+    transparent
+  );
+  pointer-events: none;
+  z-index: 20;
+  animation: packGleamSweep 3s 0.5s ease-in-out infinite;
+}
+
+/* ─── Top section: gold foil header ─────────────────────────── */
+.pack-top {
+  background: linear-gradient(160deg,
+    #6b4f0a 0%,
+    #c99a1a 18%,
+    #f5c542 32%,
+    #ffe566 45%,
+    #f5c542 58%,
+    #b8860b 75%,
+    #8b6914 100%
+  );
+  padding: 14px 16px 12px;
+  text-align: center;
+  border-bottom: 2px solid rgba(255,255,255,0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.pack-top::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255,255,255,0.25) 48%,
+    rgba(255,255,255,0.5) 50%,
+    rgba(255,255,255,0.25) 52%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.pack-top-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  color: rgba(0,0,0,0.7);
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.pack-logo {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: #1a0e00;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  margin-top: 2px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4), 0 -1px 0 rgba(0,0,0,0.3);
+}
+
+.pack-edition {
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  color: rgba(0,0,0,0.6);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+/* ─── Artist rows (full-width image banners) ─────────────────── */
+.pack-artists-strip {
+  background: linear-gradient(180deg, #0a1428 0%, #060c1e 100%);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.pack-artist-row {
+  position: relative;
+  height: 66px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(245,197,66,0.15);
+  display: flex;
+  align-items: center;
+}
+
+.pack-artist-row:last-child {
+  border-bottom: none;
+}
+
+.pack-artist-row-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  filter: saturate(0.7) brightness(0.45);
+  z-index: 0;
+}
+
+.pack-artist-row-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(6,12,30,0.4) 0%,
+    rgba(6,12,30,0.1) 40%,
+    rgba(6,12,30,0.6) 100%
+  );
+  z-index: 1;
+}
+
+.pack-artist-row-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(245,197,66,0.6);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  margin-left: 12px;
+}
+
+.pack-artist-row-name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.7);
+  margin-left: 8px;
+  padding-right: 8px;
+}
+
+/* ─── Bottom: count + barcode ────────────────────────────────── */
+.pack-bottom {
+  background: linear-gradient(180deg, #060c1e 0%, #030810 100%);
+  padding: 10px 16px 12px;
+  text-align: center;
+  border-top: 2px solid rgba(245,197,66,0.2);
+}
+
+.pack-barcode {
+  height: 20px;
+  margin-bottom: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255,255,255,0.65) 0px,
+    rgba(255,255,255,0.65) 1px,
+    transparent 1px,
+    transparent 3px,
+    rgba(255,255,255,0.4) 3px,
+    rgba(255,255,255,0.4) 4px,
+    transparent 4px,
+    transparent 6px,
+    rgba(255,255,255,0.6) 6px,
+    rgba(255,255,255,0.6) 8px,
+    transparent 8px,
+    transparent 11px
+  );
+  opacity: 0.4;
+  border-radius: 1px;
+}
+
+.pack-count-label {
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  display: block;
+}
+
+.pack-count {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--gold-bright);
+  display: block;
+  line-height: 1.1;
+  text-shadow: 0 0 16px rgba(245,197,66,0.7);
+  letter-spacing: -0.02em;
+}
+
+/* ─── Foil overlay (crossing diagonals for shimmer) ──────────── */
+.pack-foil-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      135deg,
+      transparent 0%,
+      rgba(245,197,66,0.06) 30%,
+      rgba(255,255,255,0.04) 50%,
+      rgba(245,197,66,0.06) 70%,
+      transparent 100%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 0%,
+      rgba(255,255,255,0.03) 40%,
+      rgba(245,197,66,0.05) 55%,
+      transparent 100%
+    );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  border-radius: 14px;
+  z-index: 15;
+}
+
+.pack-tear-line {
+  position: absolute;
+  top: 110px;
+  left: -10px;
+  right: -10px;
+  height: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(245,197,66,0.8) 0px,
+    rgba(245,197,66,0.8) 5px,
+    transparent 5px,
+    transparent 9px
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pack-selected-artists {
+  text-align: center;
+}
+
+.pack-selected-artists p {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.pack-artist-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pack-chip {
+  background: var(--bg-elevated);
+  border: 1px solid var(--gold);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+@media (max-width: 600px) {
+  .pack-body { width: 220px; }
+  .pack-artist-row { height: 56px; }
+  .pack-artist-row-thumb { width: 36px; height: 36px; }
+  .pack-artist-row-name { font-size: 0.9rem; }
+}
