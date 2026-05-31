@@ -27,6 +27,9 @@ function buildFilterChips(filters) {
     const label = { mainstream: 'Mainstream', known: 'Known', hidden: 'Hidden' }[filters.discoveryPopularity.key];
     if (label) chips.push(`${label} artists`);
   }
+  if (filters.discoveryArtistType) {
+    chips.push(filters.discoveryArtistType === 'Person' ? 'Solo discovery' : 'Bands discovery');
+  }
   return chips;
 }
 import { createCard } from '../components/card.js';

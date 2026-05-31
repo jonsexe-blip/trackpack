@@ -6,6 +6,23 @@ const MB_BASE = 'https://musicbrainz.org/ws/2';
  * the artist belonged to if they're a solo act.
  * Returns an empty Set on any failure so it's always safe to await.
  */
+/**
+ * Returns the MusicBrainz artist type ('Person', 'Group', 'Orchestra', etc.)
+ * for the given artist name, or null if not found / uncertain.
+ */
+export async function getArtistType(artistName) {
+  try {
+    const q = new URLSearchParams({ query: `artist:"${artistName}"`, fmt: 'json', limit: 3 });
+    const res = await fetch(`${MB_BASE}/artist/?${q}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const match = (data?.artists || []).find(a => a.score >= 85);
+    return match?.type || null;
+  } catch {
+    return null;
+  }
+}
+
 export async function getRelatedArtistNames(artistName) {
   try {
     const q = new URLSearchParams({ query: `artist:"${artistName}"`, fmt: 'json', limit: 1 });

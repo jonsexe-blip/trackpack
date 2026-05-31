@@ -242,6 +242,36 @@ export function renderArtistSelectScreen(container) {
   popularityRow.appendChild(tierGroup);
   discoveryRow.appendChild(popularityRow);
 
+  // Artist type toggle
+  const artistTypeRow = document.createElement('div');
+  artistTypeRow.className = 'popularity-row';
+
+  const artistTypeLabel = document.createElement('span');
+  artistTypeLabel.className = 'filter-section-label';
+  artistTypeLabel.textContent = 'Artist Type';
+  artistTypeRow.appendChild(artistTypeLabel);
+
+  const typeGroup = document.createElement('div');
+  typeGroup.className = 'tier-group';
+
+  [{ key: 'Person', label: 'Solo' }, { key: 'Group', label: 'Bands' }].forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'tier-btn';
+    btn.textContent = opt.label;
+    btn.dataset.key = opt.key;
+    btn.addEventListener('click', () => {
+      const already = activeFilters.discoveryArtistType === opt.key;
+      activeFilters.discoveryArtistType = already ? null : opt.key;
+      typeGroup.querySelectorAll('.tier-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.key === opt.key && !already)
+      );
+    });
+    typeGroup.appendChild(btn);
+  });
+
+  artistTypeRow.appendChild(typeGroup);
+  discoveryRow.appendChild(artistTypeRow);
+
   filterRow.appendChild(discoveryRow);
 
   // ─── Search input ──────────────────────────────────────────────────────────
@@ -423,7 +453,8 @@ export function renderArtistSelectScreen(container) {
       let discoveryDeck = [], discoveryReserve = [];
       if (discoveryCount > 0) {
         ({ deck: discoveryDeck, reserve: discoveryReserve } = await fetchDiscoveryData(artists, token, discoveryCount, {
-          popularityRange: activeFilters.discoveryPopularity || null,
+          popularityRange:   activeFilters.discoveryPopularity  || null,
+          artistTypeFilter:  activeFilters.discoveryArtistType  || null,
         }));
       }
 

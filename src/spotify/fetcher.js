@@ -1,7 +1,7 @@
 import { getArtistAlbums, getAlbumsBatch, searchArtists, getArtistTopTracks } from './api.js';
 import { adaptAlbum, adaptTrack, adaptArtist } from './adapter.js';
 import { getSimilarArtists } from '../lastfm/api.js';
-import { getRelatedArtistNames } from '../musicbrainz/api.js';
+import { getRelatedArtistNames, getArtistType } from '../musicbrainz/api.js';
 
 /**
  * Fetch albums + tracks for each chosen artist.
@@ -44,7 +44,7 @@ export async function fetchArtistData(chosenArtists, token, { noSingles = false 
  * Fetch 5 discovery cards using Last.fm similar-artist data to identify
  * candidates, then resolve them to real Spotify tracks.
  */
-export async function fetchDiscoveryData(chosenArtists, token, count = 5, { popularityRange = null } = {}) {
+export async function fetchDiscoveryData(chosenArtists, token, count = 5, { popularityRange = null, artistTypeFilter = null } = {}) {
   const apiKey = import.meta.env.VITE_LASTFM_API_KEY;
   const chosenNames = new Set(chosenArtists.map(a => a.name.toLowerCase()));
   const chosenIds   = new Set(chosenArtists.map(a => a.id));
@@ -85,6 +85,11 @@ export async function fetchDiscoveryData(chosenArtists, token, count = 5, { popu
       if (!sp || chosenIds.has(sp.id) || blockedNames.has(sp.name.toLowerCase())) return null;
       // Skip if outside the requested popularity tier
       if (popularityRange && (sp.popularity < popularityRange.min || sp.popularity > popularityRange.max)) return null;
+      // Skip if outside the requested artist type (Person / Group)
+      if (artistTypeFilter) {
+        const mbType = await getArtistType(sp.name);
+        if (mbType && mbType !== artistTypeFilter) return null;
+      }
 
       const trackRes = await getArtistTopTracks(sp.id, token);
       const tracks = trackRes?.tracks || [];
