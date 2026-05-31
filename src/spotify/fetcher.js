@@ -20,17 +20,26 @@ export async function fetchArtistData(chosenArtists, token, { noSingles = false 
     const albumItems = albumsRes?.items || [];
     if (!albumItems.length) return;
 
-    const fullAlbumsRes = await getAlbumsBatch(albumItems.map(a => a.id), token);
+    // Spotify often returns the same album multiple times for different markets
+    const uniqueAlbumIds = [...new Set(albumItems.map(a => a.id))];
+
+    const fullAlbumsRes = await getAlbumsBatch(uniqueAlbumIds, token);
     const fullAlbums = fullAlbumsRes?.albums || [];
 
+    const seenAlbumIds = new Set();
+    const seenTrackIds = new Set();
     fullAlbums.forEach(spAlbum => {
       if (!spAlbum) return;
+      if (seenAlbumIds.has(spAlbum.id)) return;
+      seenAlbumIds.add(spAlbum.id);
       const album = adaptAlbum(spAlbum, artist.id);
       albumsByArtist[artist.id].push(album);
 
       const tracks = spAlbum.tracks?.items || [];
       tracks.forEach(spTrack => {
         if (!spTrack || spTrack.is_local) return;
+        if (seenTrackIds.has(spTrack.id)) return;
+        seenTrackIds.add(spTrack.id);
         const track = adaptTrack(spTrack, artist.id, album.id);
         songsByArtist[artist.id].push(track);
       });

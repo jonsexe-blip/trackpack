@@ -475,7 +475,12 @@ export function renderArtistSelectScreen(container) {
 
       setStatus('Almost ready…');
 
-      setDecks(coreDeck, coreReserve, discoveryDeck, discoveryReserve);
+      // Remove any discovery track whose song ID already exists in the core deck or reserve
+      const coreTrackIds = new Set([...coreDeck, ...coreReserve].map(c => c.song.id));
+      const dedupedDiscovery = discoveryDeck.filter(c => !coreTrackIds.has(c.song.id));
+      const dedupedDiscoveryReserve = discoveryReserve.filter(c => !coreTrackIds.has(c.song.id));
+
+      setDecks(coreDeck, coreReserve, dedupedDiscovery, dedupedDiscoveryReserve);
       setActiveFilters(activeFilters);
       overlay.remove();
       transitionTo('pack-open');
