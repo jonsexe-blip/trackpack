@@ -37,6 +37,25 @@ import { animateCardExit } from '../animations/card-exit.js';
 import { animateCardEnter } from '../animations/card-enter.js';
 import { createPlaylist, addTracksToPlaylist } from '../spotify/api.js';
 
+function buildDiscoveryNotice(found, requested, filters) {
+  const reasons = [];
+  if (filters?.discoveryArtistType) {
+    const label = filters.discoveryArtistType === 'Person' ? 'solo artists' : 'bands';
+    reasons.push(`limited to ${label}`);
+  }
+  if (filters?.discoveryPopularity?.key) {
+    const label = { mainstream: 'mainstream', known: 'mid-level', hidden: 'hidden' }[filters.discoveryPopularity.key];
+    if (label) reasons.push(`${label} popularity only`);
+  }
+  const reasonText = reasons.length ? ` — filters active: ${reasons.join(', ')}` : ' — not enough similar artists found';
+  return `
+    <div class="discovery-notice">
+      <span class="discovery-notice-icon">&#9432;</span>
+      Found ${found} of ${requested} discovery tracks${reasonText}
+    </div>
+  `;
+}
+
 function generatePlaylistName(artists) {
   const names  = artists.map(a => a.name);
   const firsts = names.map(n => n.split(/\s+/)[0]);
@@ -84,11 +103,17 @@ export function renderCardGridScreen(container) {
     ? `<div class="active-filters-row">${filterChips.map(c => `<span class="active-filter-chip">${c}</span>`).join('')}</div>`
     : '';
 
+  const requestedDiscovery = activeFilters?.discoveryCount ?? 5;
+  const foundDiscovery = discoveryDeck.length;
+  const discoveryShortfall = requestedDiscovery > 0 && foundDiscovery < requestedDiscovery;
+  const discoveryNoticeHTML = discoveryShortfall ? buildDiscoveryNotice(foundDiscovery, requestedDiscovery, activeFilters) : '';
+
   header.innerHTML = `
     <div class="grid-header-left">
       <h2>Your TrackPack</h2>
       <p>${fullDeck.length} tracks · from ${chosenArtists.map(a => a.name).join(', ')}</p>
       ${chipsHTML}
+      ${discoveryNoticeHTML}
     </div>
     <div class="grid-legend">
       <div class="legend-item">

@@ -259,8 +259,18 @@ body {
 .pack-loading-text {
   color: var(--text-secondary);
   font-size: 0.92rem;
+  font-weight: 600;
   letter-spacing: 0.06em;
   animation: pulse 1.6s ease-in-out infinite;
+  transition: opacity 0.3s;
+}
+
+.pack-loading-sub {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  min-height: 1.2em;
+  transition: opacity 0.3s;
 }
 
 @media (max-width: 600px) {

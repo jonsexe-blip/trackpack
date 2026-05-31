@@ -139,6 +139,23 @@
   white-space: nowrap;
 }
 
+.discovery-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.discovery-notice-icon {
+  flex-shrink: 0;
+  color: rgba(255,215,80,0.5);
+  font-style: normal;
+  margin-top: 1px;
+}
+
 .grid-footer {
   display: flex;
   align-items: center;

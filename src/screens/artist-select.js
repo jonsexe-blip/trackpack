@@ -426,17 +426,28 @@ export function renderArtistSelectScreen(container) {
     overlay.className = 'pack-loading-overlay';
     overlay.innerHTML = `
       <div class="pack-loading-spinner"></div>
-      <p class="pack-loading-text">Building your TrackPack…</p>
+      <p class="pack-loading-text"></p>
+      <p class="pack-loading-sub"></p>
     `;
     document.body.appendChild(overlay);
+
+    const loadingText = overlay.querySelector('.pack-loading-text');
+    const loadingSub  = overlay.querySelector('.pack-loading-sub');
+    const setStatus = (main, sub = '') => {
+      loadingText.textContent = main;
+      loadingSub.textContent  = sub;
+    };
 
     try {
       const token = getState().accessToken;
       const discoveryCount = activeFilters.discoveryCount ?? 5;
 
+      setStatus('Fetching albums from Spotify…', `Looking up ${artists.map(a => a.name).join(', ')}`);
       const { albumsByArtist, songsByArtist: rawSongs } = await fetchArtistData(artists, token, {
         noSingles: !!activeFilters.noSingles,
       });
+
+      setStatus('Applying your filters…');
       const songsByArtist = applyFilters(rawSongs, albumsByArtist, activeFilters);
 
       // Check for artists that ended up with zero songs after filtering
@@ -449,14 +460,20 @@ export function renderArtistSelectScreen(container) {
         return;
       }
 
+      setStatus('Building your track list…', 'Picking the best tracks from each artist');
       const { deck: coreDeck, reserve: coreReserve } = generateCoreDeck(artists, songsByArtist, albumsByArtist);
+
       let discoveryDeck = [], discoveryReserve = [];
       if (discoveryCount > 0) {
+        setStatus('Finding discovery tracks…', 'Searching for similar artists you might like');
         ({ deck: discoveryDeck, reserve: discoveryReserve } = await fetchDiscoveryData(artists, token, discoveryCount, {
           popularityRange:   activeFilters.discoveryPopularity  || null,
           artistTypeFilter:  activeFilters.discoveryArtistType  || null,
+          onProgress:        (msg) => setStatus('Finding discovery tracks…', msg),
         }));
       }
+
+      setStatus('Almost ready…');
 
       setDecks(coreDeck, coreReserve, discoveryDeck, discoveryReserve);
       setActiveFilters(activeFilters);

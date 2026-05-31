@@ -44,12 +44,14 @@ export async function fetchArtistData(chosenArtists, token, { noSingles = false 
  * Fetch 5 discovery cards using Last.fm similar-artist data to identify
  * candidates, then resolve them to real Spotify tracks.
  */
-export async function fetchDiscoveryData(chosenArtists, token, count = 5, { popularityRange = null, artistTypeFilter = null } = {}) {
+export async function fetchDiscoveryData(chosenArtists, token, count = 5, { popularityRange = null, artistTypeFilter = null, onProgress = null } = {}) {
+  const report = (msg) => onProgress?.(msg);
   const apiKey = import.meta.env.VITE_LASTFM_API_KEY;
   const chosenNames = new Set(chosenArtists.map(a => a.name.toLowerCase()));
   const chosenIds   = new Set(chosenArtists.map(a => a.id));
 
   // 1. Fetch Last.fm similar artists + MusicBrainz member/band relations in parallel
+  report('Asking Last.fm for similar artists…');
   const [similarArrays, relatedNameSets] = await Promise.all([
     Promise.all(chosenArtists.map(a => getSimilarArtists(a.name, apiKey).catch(() => []))),
     Promise.all(chosenArtists.map(a => getRelatedArtistNames(a.name).catch(() => new Set()))),
@@ -76,6 +78,7 @@ export async function fetchDiscoveryData(chosenArtists, token, count = 5, { popu
   pool.sort((a, b) => parseFloat(b.match) - parseFloat(a.match));
 
   // 3. For each candidate: search Spotify for their profile, then get a top track
+  report(`Resolving ${Math.min(pool.length, count * 5)} candidates on Spotify…`);
   const candidates = pool.slice(0, count * 5);
   const cards = await Promise.all(candidates.map(async (entry) => {
     try {
