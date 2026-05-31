@@ -694,3 +694,19 @@
   .sidebar-footer { margin-top: 20px; padding-top: 16px; }
   .artist-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+@media (max-width: 500px) {
+  .selected-artists-preview {
+    grid-template-columns: 1fr;
+  }
+  .selected-chip {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 10px 12px;
+    text-align: left;
+  }
+  .selected-chip-img {
+    width: 48px;
+    height: 48px;
+  }
+}
